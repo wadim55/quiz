@@ -6,7 +6,7 @@ public class WordData : MonoBehaviour
     [SerializeField] private Text wordText;
 
     [HideInInspector]
-    public char wordValue;
+    public string wordValue;
 
     private Button buttonComponent;
 
@@ -19,7 +19,7 @@ public class WordData : MonoBehaviour
         }
     }
 
-    public void SetWord(char value)
+    public void SetWord(string value)
     {
         wordText.text = value + "";
         wordValue = value;

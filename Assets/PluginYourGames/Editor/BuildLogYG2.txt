@@ -1,0 +1,3 @@
+Build path: C:/work/Unity_projects/loook
+Build number: 22
+PluginYG version: 2.0032

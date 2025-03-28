@@ -15,4 +15,7 @@ MonoBehaviour:
   questions:
   - questionImage: {fileID: -7956244206612457457, guid: 76cd033b80cc74f46bb372e8e8b57d0c,
       type: 3}
-    answer: "\u0430\u0443\u0434\u0438"
+    answer: "\u0410\u0423\u0414\u0418"
+  - questionImage: {fileID: 8957324059118975939, guid: ebd73fc178e1365469ce7dda36a9c7f0,
+      type: 3}
+    answer: "\u041F\u041E\u0420\u0428"

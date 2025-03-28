@@ -2,13 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
+using YG;
 
 public class QuizManager : MonoBehaviour
 {
     public static QuizManager instance; //Instance to make is available in other scripts without reference
 
+    [SerializeField] private string[] letter;
     [SerializeField] private GameObject gameComplete;
     //Scriptable data which store our questions data
     [SerializeField] private QuizDataScriptable questionDataScriptable;
@@ -17,14 +22,16 @@ public class QuizManager : MonoBehaviour
     [SerializeField] private WordData[] optionsWordList;    //list of options word in the game
 
 
-    private GameStatus gameStatus = GameStatus.Playing;     //to keep track of game status
-    private char[] wordsArray = new char[12];               //array which store char of each options
+    private GameStatus gameStatus = GameStatus.Playing;           //to keep track of game status
+    [SerializeField] private string[] wordsArray = new string[12];    //массив, в котором хранится символ каждого параметра
 
     private List<int> selectedWordsIndex;                   //list which keep track of option word index w.r.t answer word index
     private int currentAnswerIndex = 0, currentQuestionIndex = 0;   //index to keep track of current answer and current question
     private bool correctAnswer = true;                      //bool to decide if answer is correct or not
     private string answerWord;                              //string to store answer of current question
 
+
+    private int _saveData;
     private void Awake()
     {
         if (instance == null)
@@ -36,7 +43,7 @@ public class QuizManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        selectedWordsIndex = new List<int>();           //create a new list at start
+     selectedWordsIndex = new List<int>();           //create a new list at start
         SetQuestion();                                  //set question
     }
 
@@ -54,19 +61,20 @@ public class QuizManager : MonoBehaviour
         selectedWordsIndex.Clear();                     //clear the list for new question
         Array.Clear(wordsArray, 0, wordsArray.Length);  //clear the array
 
-        //add the correct char to the wordsArray
+        //добавляем корректные буквы в мпссив выбора букв
         for (int i = 0; i < answerWord.Length; i++)
         {
-            wordsArray[i] = char.ToUpper(answerWord[i]);
+            wordsArray[i] = answerWord[i].ToString(); //char.ToUpper(answerWord[i]);
         }
 
-        //add the dummy char to wordsArray
+        //затем добавляем рандомные буквы 
         for (int j = answerWord.Length; j < wordsArray.Length; j++)
         {
-            wordsArray[j] = (char)UnityEngine.Random.Range(65, 90);
+            wordsArray[j] = letter[Random.Range(0, 33)]; //(char)UnityEngine.Random.Range(65, 90); //UnityEngine.Random.Range(65, 90)
+            print(wordsArray[j]);
         }
 
-        wordsArray = ShuffleList.ShuffleListItems<char>(wordsArray.ToList()).ToArray(); //Randomly Shuffle the words array
+        wordsArray = ShuffleList.ShuffleListItems(wordsArray.ToList()).ToArray(); //Случайным образом перетасум массив букв
 
         //set the options words Text value
         for (int k = 0; k < optionsWordList.Length; k++)
@@ -83,7 +91,7 @@ public class QuizManager : MonoBehaviour
         for (int i = 0; i < answerWordList.Length; i++)
         {
             answerWordList[i].gameObject.SetActive(true);
-            answerWordList[i].SetWord('_');
+            answerWordList[i].SetWord("_");
         }
 
         //Now deactivate the unwanted answerWordList gameobject (object more than answer string length)
@@ -124,7 +132,7 @@ public class QuizManager : MonoBehaviour
             for (int i = 0; i < answerWord.Length; i++)
             {
                 //if answerWord[i] is not same as answerWordList[i].wordValue
-                if (char.ToUpper(answerWord[i]) != char.ToUpper(answerWordList[i].wordValue))
+                if (answerWord[i].ToString() != answerWordList[i].wordValue)
                 {
                     correctAnswer = false; //set it false
                     break; //and break from the loop
@@ -137,7 +145,6 @@ public class QuizManager : MonoBehaviour
                 Debug.Log("Correct Answer");
                 gameStatus = GameStatus.Next; //set the game status
                 currentQuestionIndex++; //increase currentQuestionIndex
-
                 //if currentQuestionIndex is less that total available questions
                 if (currentQuestionIndex < questionDataScriptable.questions.Count)
                 {
@@ -161,7 +168,7 @@ public class QuizManager : MonoBehaviour
             selectedWordsIndex.RemoveAt(selectedWordsIndex.Count - 1);
 
             currentAnswerIndex--;
-            answerWordList[currentAnswerIndex].SetWord('_');
+            answerWordList[currentAnswerIndex].SetWord("_");
         }
     }
 
